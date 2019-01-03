@@ -15,6 +15,20 @@ export async function fetchTodos ({commit}) {
 	}
 }
 
+export async function fetchTodo ({commit}, id) {
+	try {
+		const { data } = await Vue.axios({
+			method: 'GET',
+			url: `/todos/${id}`
+		})
+		commit('setTodo', data)
+	} catch (e) {
+		commit('todosError', e.message);
+	} finally {
+		console.log('La petición para obtener el todo ha finalizado');
+	}
+}
+
 export async function addTodo ({commit}, todo) {
 	try {
 		await Vue.axios({
@@ -51,7 +65,7 @@ export async function updateTodo ({commit}, todo) {
 	}
 }
 
-export async function updateTodoStatus ({commit}, todo) {
+export async function updateTodoStatus ({commit, dispatch}, todo) {
 	try {
 		await Vue.axios({
 			method: 'PUT',
@@ -62,6 +76,7 @@ export async function updateTodoStatus ({commit}, todo) {
 				done: !todo.done
 			}
 		})
+		dispatch('fetchTodos')
 	} catch (e) {
 		commit('todosError', e.message)
 	} finally {
